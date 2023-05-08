@@ -25,5 +25,6 @@ cat > /etc/nginx/conf.d/site.conf<<EOM
     }
 EOM
 
-echo > /var/www/html/index.html "<h1>Hello world!</h1>"
+mkdir -p /var/www/html
+echo "<h1>Hello world!</h1>" > /var/www/html/index.html
 nginx -s reload
