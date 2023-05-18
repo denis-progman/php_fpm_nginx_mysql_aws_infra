@@ -76,3 +76,19 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public_website_fpm_nginx_rt.id
   subnet_id      = aws_subnet.public_website_fpm_nginx_subnet.id
 }
+
+data "aws_vpc_endpoint_service" "s3" {
+  service      = "s3"
+  service_type = "Gateway"
+
+}
+
+resource "aws_vpc_endpoint" "s3_connect" {
+  vpc_id       = aws_vpc.website_fpm_nginx_vpc.id
+  service_name = data.aws_vpc_endpoint_service.s3.service_name
+  route_table_ids = [aws_route_table.private_website_fpm_nginx_rt.id, aws_route_table.public_website_fpm_nginx_rt.id]
+
+  tags = {
+    Name = "website_vpc_endpoint_s3"
+  }
+}

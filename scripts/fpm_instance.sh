@@ -22,7 +22,7 @@ php-dom \
 php-gd \
 libmcrypt
 
-sudo chmod 777 /etc/php-fpm
+sudo chmod 777 -R /etc
 
 sudo mkdir -p /var/www/html
 echo "<h1 style="color: darkred">Hello world, from fpm!</h1>" > /var/www/html/index.html
