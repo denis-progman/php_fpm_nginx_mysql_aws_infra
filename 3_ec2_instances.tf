@@ -12,6 +12,7 @@ resource "aws_instance" "nginx_ec2_website_instance" {
 }
 
 resource "aws_instance" "fpm_ec2_website_instance" {
+    depends_on = [ aws_instance.nginx_ec2_website_instance ]
     ami = data.aws_ami.amazon_linux.id
     instance_type = "t3.micro"
     subnet_id = aws_subnet.private_website_fpm_nginx_subnet_0.id
@@ -31,12 +32,14 @@ module "nginx_file_exec_provision" {
   private_key = file("~/.ssh/aws_tests/test-1.pem")
 
   file_source = "./configs/nginx.conf"
-  file_destination = "/etc/nginx/nginx.conf"
+  file_destination = "/tmp/nginx.conf"
 
   exec_lines = [
-    "sudo sed -i 's/$FPM_PRIVATE_IP/${aws_instance.fpm_ec2_website_instance.private_ip}/' /etc/nginx/nginx.conf",
-    "sudo sed -i 's/$PROXYED_YUM_IP/${aws_instance.fpm_ec2_website_instance.private_ip}/' /etc/nginx/nginx.conf",
-    "sudo chmod 755 /etc/nginx/nginx.conf",
+    # "chmod 777 /etc/nginx/nginx.conf",
+    "sed -i 's/$FPM_PRIVATE_IP/${aws_instance.fpm_ec2_website_instance.private_ip}/' /tmp/nginx.conf",
+    "sudo mv -f /tmp/nginx.conf /etc/nginx/nginx.conf",
+    # "sudo chmod 744 /etc/nginx/nginx.conf",
+    # "sudo rm -f /tmp/nginx.conf",
     "sudo nginx -s reload",
   ]
 }
@@ -50,10 +53,13 @@ module "fpm_file_exec_bastion_provision" {
   bastion_private_key = file("~/.ssh/aws_tests/test-1.pem")
 
   file_source = "./configs/fpm.conf"
-  file_destination = "/etc/fpm.conf"
+  file_destination = "/tmp/php-fpm.conf"
 
   exec_lines = [
-    "sudo chmod 755 /etc/php-fpm.d",
+    # "chmod 777 /etc/php-fpm.conf",
+    "sudo mv -f /tmp/php-fpm.conf /etc/php-fpm.conf",
+    # "sudo chmod 755 /etc/php-fpm.conf",
+    # "sudo rm -f /tmp/php-fpm.conf",
     "sudo systemctl restart php-fpm",
   ]
 }

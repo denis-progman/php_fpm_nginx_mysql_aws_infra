@@ -25,17 +25,7 @@ variable "exec_lines" {
   default = []
 }
 
-# variable "depends_on" {
-#   type    = list(string)
-#   default = []
-# }
-
-# locals {
-#   depends_on = var.depends_on ? [var.depends_on] : []
-# }
-
 resource "null_resource" "file_exec_provision" {  
-  # depends_on = [locals.depends_on]
   connection {
     host     = var.host
     type     = "ssh"

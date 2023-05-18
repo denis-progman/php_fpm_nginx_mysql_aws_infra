@@ -19,6 +19,14 @@ resource "aws_security_group" "http_ssh_ec2_website_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "as proxy"
+    from_port = 8000
+    to_port = 8000
+    protocol = "tcp"
+    cidr_blocks = ["${aws_vpc.website_fpm_nginx_vpc.cidr_block}"]
+  }
+
   egress {
     from_port = 0
     to_port = 0
