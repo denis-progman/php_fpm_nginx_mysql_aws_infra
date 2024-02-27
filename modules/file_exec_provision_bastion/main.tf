@@ -46,11 +46,7 @@ resource "null_resource" "file_exec_provision" {
     type     = "ssh"
     user     = var.user
     private_key = var.private_key
-<<<<<<< HEAD
-    timeout = "1m"
-=======
     timeout = "3m"
->>>>>>> dev
   }
 
   provisioner "file" {
